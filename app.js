@@ -56,7 +56,11 @@ sequelize
   })
   .then((user) => {
     if (!user) {
-      return User.create({ name: "Əzməmməd", email: "ezmemmed@yahoo.com" });
+      return User.create({
+        id: 1,
+        name: "Əzməmməd",
+        email: "ezmemmed@yahoo.com",
+      });
     }
     return user;
   })
