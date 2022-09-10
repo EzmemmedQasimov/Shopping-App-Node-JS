@@ -1,17 +1,30 @@
-const mongodb = require("mongodb");
+const mongodb = require('mongodb');
 const MongoClient = mongodb.MongoClient;
+let _db;
 
-const MongoConnect = (callback) => {
+
+const mongoConnect = callback => {
+
   MongoClient.connect(
-    "mongodb+srv://azmammad:ylqqNP7wRWq29Tuq@cluster0.6rwjomi.mongodb.net/?retryWrites=true&w=majority"
+    'mongodb://azmammad:ylqqNP7wRWq29Tuq@ac-h2lvyoh-shard-00-00.6rwjomi.mongodb.net:27017,ac-h2lvyoh-shard-00-01.6rwjomi.mongodb.net:27017,ac-h2lvyoh-shard-00-02.6rwjomi.mongodb.net:27017/?ssl=true&replicaSet=atlas-zwwx4l-shard-0&authSource=admin&retryWrites=true&w=majority'
   )
-    .then((result) => {
-      console.log("Connected!");
-      callback(result);
+    .then(client => {
+      console.log('Connected!');
+      _db = client.db();
+      callback();
     })
-    .catch((err) => {
+    .catch(err => {
       console.log(err);
+      throw err+"adasd";
     });
 };
 
-module.exports = MongoConnect;
+const getDb = () => {
+  if (_db) {
+    return _db;
+  }
+  throw 'No database found!';
+};
+
+exports.mongoConnect = mongoConnect;
+exports.getDb = getDb;
