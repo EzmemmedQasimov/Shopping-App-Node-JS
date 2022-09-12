@@ -1,10 +1,9 @@
 const mongodb = require('mongodb');
 const MongoClient = mongodb.MongoClient;
+
 let _db;
 
-
 const mongoConnect = callback => {
-
   MongoClient.connect(
     'mongodb+srv://azmammad:ylqqNP7wRWq29Tuq@cluster0.6rwjomi.mongodb.net/shop?retryWrites=true&w=majority'
   )
@@ -15,7 +14,7 @@ const mongoConnect = callback => {
     })
     .catch(err => {
       console.log(err);
-      throw err+"adasd";
+      throw err;
     });
 };
 
