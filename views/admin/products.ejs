@@ -6,7 +6,7 @@
         <%- include('../includes/navigation.ejs') %>
 
             <main>
-                <% if (prods.length > 0) { %>
+                <% if (prods.length> 0) { %>
                     <div class="grid">
                         <% for (let product of prods) { %>
                             <article class="card product-item">
@@ -28,9 +28,9 @@
                                 </div>
                                 <div class="card__actions">
                                     <a href="/admin/edit-product/<%= product._id %>?edit=true" class="btn">Edit</a>
-                                    <form action="/admin/delete-product" method="POST">
-                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                        <input type="hidden" value="<%= product._id %>" name="productId">
+                                    <form id="delete-form" action="/admin/delete-product" method="POST">
+                                        <input type="hidden" name="_csrf" id="csrf" value="<%= csrfToken %>">
+                                        <input type="hidden" value="<%= product._id %>" name="productId" id="productId">
                                         <button class="btn" type="submit">Delete</button>
                                     </form>
 
@@ -43,3 +43,35 @@
                         <% } %>
             </main>
             <%- include('../includes/end.ejs') %>
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+                <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                <script>
+                    $("#delete-form").on("submit", function (e) {
+                        e.preventDefault();
+                        let csrf = $('#csrf').val();
+                        let productId = $('#productId').val();
+
+                        Swal.fire({
+                            title: "Are you sure?",
+                            showCancelButton: true,
+                            confirmButtonColor: "#DD6B55",
+                            confirmButtonText: "Yes!",
+                        }).then(result => {
+                            if (result.isConfirmed) {
+                                $.ajax({
+                                    url: "/admin/delete-product",
+                                    method: "post",
+                                    data: { _csrf: csrf, productId: productId },
+                                    success: function () {
+                                        Swal.fire("Done!", "Product was succesfully deleted!", "success");
+                                        setTimeout(location.reload(), 3500);
+                                    },
+                                    error: function (xhr, ajaxOptions, thrownError) {
+                                        Swal.fire("Error deleting!", "Please try again", "error");
+                                    }
+                                });
+                            }
+                        })
+
+                    });
+                </script>
