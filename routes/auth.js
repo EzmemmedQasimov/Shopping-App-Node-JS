@@ -8,8 +8,11 @@ router.get("/login", authController.getLogin);
 router.post(
   "/login",
   [
-    body("email", "Invalid email!").isEmail(),
-    body("password", "Invalid password").isAlphanumeric().isLength({ min: 4 }),
+    body("email", "Invalid email!").isEmail().normalizeEmail(),
+    body("password", "Invalid password")
+      .isAlphanumeric()
+      .isLength({ min: 4 })
+      .trim(),
   ],
   authController.postLogin
 );
@@ -25,16 +28,20 @@ router.post(
         if (userDoc) {
           return Promise.reject("Email already exist.");
         }
-      }),
+      })
+      .normalizeEmail(),
     body("password", "Password should be 4 characters")
       .isAlphanumeric()
-      .isLength({ min: 4 }),
-    body("confirmPassword").custom((value, { req }) => {
-      if (value !== req.body.password) {
-        throw new Error("Password have to match!");
-      }
-      return true;
-    }),
+      .isLength({ min: 4 })
+      .trim(),
+    body("confirmPassword")
+      .custom((value, { req }) => {
+        if (value !== req.body.password) {
+          throw new Error("Password have to match!");
+        }
+        return true;
+      })
+      .trim(),
   ],
   authController.postRegister
 );
