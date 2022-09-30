@@ -10,9 +10,9 @@ router.post(
   [
     body("email", "Invalid email!").isEmail().normalizeEmail(),
     body("password", "Invalid password")
-      .isAlphanumeric()
-      .isLength({ min: 4 })
-      .trim(),
+      // .isAlphanumeric()
+      // .isLength({ min: 4 })
+      // .trim(),
   ],
   authController.postLogin
 );
