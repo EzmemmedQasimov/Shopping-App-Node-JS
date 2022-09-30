@@ -1,3 +1,5 @@
+const fs = require("fs");
+const path = require("path");
 const Product = require("../models/product");
 const Order = require("../models/order");
 const mongoose = require("mongoose");
@@ -135,4 +137,30 @@ exports.getOrders = (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error);
     });
+};
+
+exports.getInvoice = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = "invoice-" + orderId + ".pdf";
+  Order.findById(orderId).then((order) => {
+    if (!order) {
+      return next(new Error("Order not found!"));
+    }
+    if (order.user.userId.toString() !== req.user._id.toString()) {
+      return next(new Error("Unauthorized!"));
+    }
+    const invoicePath = path.join("data", "invoice", invoiceName);
+
+    fs.readFile(invoicePath, (err, data) => {
+      if (err) {
+        return next(err);
+      }
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        'inline; filename="' + invoiceName + '"'
+      );
+      res.send(data);
+    });
+  });
 };
